@@ -1,0 +1,35 @@
+name: PHP Composer Install and Deployment for Fundy
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Environment Variables
+      run: |
+        echo "IS_PRODUCTION=${{ secrets.F_IS_PRODUCTION }}" >> .env
+        echo "DB_HOST=${{ secrets.F_DB_HOST }}" >> .env
+        echo "DB_NAME=${{ secrets.F_DB_NAME }}" >> .env
+        echo "DB_USERNAME=${{ secrets.F_DB_USERNAME }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.F_DB_PASSWORD }}" >> .env
+        echo "SESSION_PASSWORD=${{ secrets.F_SESSION_PASSWORD }}" >> .env
+        echo "LOCAL_API_USER=${{ secrets.F_LOCAL_API_USER }}" >> .env
+        echo "LOCAL_API_PASSWORD=${{ secrets.F_LOCAL_API_PASSWORD }}" >> .env
+        echo "MAINTENANCE_ENABLED=${{ secrets.F_MAINTENANCE_ENABLED }}" >> .env
+        echo "GOOGLE_CLIENT_ID=${{ secrets.F_GOOGLE_CLIENT_ID }}" >> .env
+        echo "GOOGLE_CLIENT_SECRET=${{ secrets.F_GOOGLE_CLIENT_SECRET }}" >> .env
+        echo "GOOGLE_CLIENT_REDIRECT=${{ secrets.F_GOOGLE_CLIENT_REDIRECT }}" >> .env
+
+    - name: Deploy to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.H_SERVER }}
+        username: ${{ secrets.H_USERNAME }}
+        password: ${{ secrets.H_PASSWORD }}
